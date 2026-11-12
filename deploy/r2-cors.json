@@ -1,0 +1,17 @@
+[
+    {
+        "ID": "aadityasoftwares-media-cors",
+        "AllowedOrigins": [
+            "http://localhost:4200",
+            "http://localhost:3000",
+            "https://aadityasoftwares.in",
+            "https://media.aadityasoftwares.in",
+            "https://www.aadityasoftwares.in"
+        ],
+        "AllowedMethods": ["GET", "PUT", "POST", "HEAD", "DELETE"],
+        "AllowedHeaders": ["*"],
+        "ExposeHeaders": ["ETag"],
+        "MaxAgeSeconds": 3600
+    }
+]
+
