@@ -10,6 +10,9 @@ export function getAllowedOrigins(env: NodeJS.ProcessEnv = process.env): string[
         "http://127.0.0.1:3000",
         "http://localhost:4200",
         "http://127.0.0.1:4200",
+        "https://aadityasoftwares.in",
+        "https://www.aadityasoftwares.in",
+        "https://media.aadityasoftwares.in",
         "https://aadityasoftwares.fun",
         "https://www.aadityasoftwares.fun",
         "https://stickyji.com",
@@ -55,8 +58,10 @@ export function createCorsOptions(env: NodeJS.ProcessEnv = process.env): CorsOpt
             // Check against allowed list and production domains
             if (
                 allowedList.includes(origin) ||
+                origin.endsWith(".aadityasoftwares.in") ||
                 origin.endsWith(".aadityasoftwares.fun") ||
                 origin.endsWith(".stickyji.com") ||
+                origin === "https://aadityasoftwares.in" ||
                 origin === "https://aadityasoftwares.fun" ||
                 origin === "https://stickyji.com"
             ) {

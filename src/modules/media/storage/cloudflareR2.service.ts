@@ -50,7 +50,7 @@ export class CloudflareR2Service {
     async createUploadUrl(
         storageKey: string,
         mimeType: string,
-        size: number,
+        _size: number,
         bucket: string = this.bucketName,
         expiresIn: number = MEDIA_CONSTANTS.UPLOAD_URL_EXPIRES_IN_SECONDS,
     ): Promise<string> {
@@ -58,13 +58,11 @@ export class CloudflareR2Service {
             Bucket: this.assertBucket(bucket),
             Key: storageKey,
             ContentType: mimeType,
-            ContentLength: size,
-            IfNoneMatch: "*",
         });
 
         return getSignedUrl(this.client, command, {
             expiresIn,
-            signableHeaders: new Set(["content-type", "if-none-match"]),
+            signableHeaders: new Set(["content-type"]),
         });
     }
 
