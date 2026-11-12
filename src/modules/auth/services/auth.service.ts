@@ -1073,12 +1073,12 @@ export class AuthService {
             isMfaEnabled: user.isMfaEnabled,
             profile: profile
                 ? {
-                      firstName: profile.firstName ?? null,
-                      lastName: profile.lastName ?? null,
-                      displayName: profile.displayName ?? null,
-                      profileImage: profile.profileImage ?? null,
-                      avatarUrl: profile.avatarUrl ?? null,
-                  }
+                    firstName: profile.firstName ?? null,
+                    lastName: profile.lastName ?? null,
+                    displayName: profile.displayName ?? null,
+                    profileImage: profile.profileImage ?? null,
+                    avatarUrl: profile.avatarUrl ?? null,
+                }
                 : null,
             createdAt: user.createdAt,
             updatedAt: user.updatedAt,
