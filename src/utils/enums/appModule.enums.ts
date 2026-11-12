@@ -22,5 +22,6 @@ export enum AppModule {
     EXPENSE = "EXPENSE",
     DASHBOARD = "DASHBOARD",
     REPORT = "REPORT",
+    BLOG = "BLOG",
 }
 

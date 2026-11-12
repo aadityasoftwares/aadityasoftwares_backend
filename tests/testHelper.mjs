@@ -56,5 +56,8 @@ export async function teardownTestServer() {
         await new Promise((resolve) => server.close(resolve));
         server = null;
     }
+    if (mongoose.connection.readyState) {
+        await mongoose.disconnect();
+    }
 }
 

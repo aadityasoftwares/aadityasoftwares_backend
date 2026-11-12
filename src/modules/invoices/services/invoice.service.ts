@@ -53,7 +53,7 @@ export class InvoiceService {
         return {
             name: map.get(SystemSettingKey.COMPANY_NAME) || "Aaditya Softwares",
             address: map.get(SystemSettingKey.COMPANY_ADDRESS) || "Pune, Maharashtra, India",
-            email: map.get(SystemSettingKey.COMPANY_EMAIL) || "contact@aadityasoftwares.fun",
+            email: map.get(SystemSettingKey.COMPANY_EMAIL) || "contact@aadityasoftwares.in",
             phone: map.get(SystemSettingKey.COMPANY_PHONE) || "+91 9876543210",
             gstin: map.get(SystemSettingKey.COMPANY_GSTIN) || "27AAAAA0000A1Z5",
             pan: map.get(SystemSettingKey.COMPANY_PAN) || "AAAAA0000A",

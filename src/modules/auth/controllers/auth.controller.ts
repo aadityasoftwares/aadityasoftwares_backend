@@ -214,4 +214,14 @@ export class AuthController {
             next(error);
         }
     };
+
+    getMe = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const userId = RequestUtil.getUserId(req);
+            const user = await this.authService.getCurrentUser(userId);
+            return res.status(200).json(ResponseUtil.success("User profile fetched successfully.", user));
+        } catch (error) {
+            next(error);
+        }
+    };
 }

@@ -7,6 +7,7 @@ export enum PermissionAction {
     ASSIGN = "ASSIGN",
     CANCEL = "CANCEL",
     REVERSE = "REVERSE",
+    PUBLISH = "PUBLISH",
 }
 
 export enum PermissionAccess {
@@ -27,4 +28,5 @@ export enum PermissionModule {
     ROLES = "ROLES",
     SYSTEM_SETTINGS = "SYSTEM_SETTINGS",
     TASKS = "TASKS",
+    BLOG = "BLOG",
 }

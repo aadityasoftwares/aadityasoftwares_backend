@@ -57,5 +57,6 @@ export enum MediaResourceType {
     INVOICE = "INVOICE",
     PAYMENT = "PAYMENT",
     EXPENSE = "EXPENSE",
+    BLOG = "BLOG",
     OTHER = "OTHER",
 }

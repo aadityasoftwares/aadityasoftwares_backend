@@ -7,6 +7,7 @@ import { AuditLogService } from "../auditlog/services/auditLog.service.js";
 import { AppModule } from "../../utils/enums/appModule.enums.js";
 import { AuditLogAction } from "../auditlog/constants/auditLog.enums.js";
 import type { IAuditLogContext } from "../auditlog/interfaces/auditLog.interface.js";
+import { formatMediaObject } from "../../utils/mediaUrl.util.js";
 
 export class ExpenseService {
     private auditLogService: AuditLogService;
@@ -76,10 +77,14 @@ export class ExpenseService {
         const expense = await ExpenseModel.findOne({ _id: new Types.ObjectId(id), isDeleted: { $ne: true } })
             .populate("recordedBy", "email")
             .populate("currencyId", "name code symbol")
-            .populate("receiptMediaId", "publicUrl originalFileName mimeType")
+            .populate("receiptMediaId", "storageKey publicUrl originalFileName mimeType")
             .exec();
         if (!expense) throw new AppError("Expense not found.", 404);
-        return expense;
+        const obj: any = expense.toObject();
+        if (obj.receiptMediaId) {
+            obj.receiptMediaId = formatMediaObject(obj.receiptMediaId);
+        }
+        return obj;
     }
 
     async deleteExpense(id: string, userId: string, context?: IAuditLogContext) {
@@ -138,7 +143,7 @@ export class ExpenseService {
             ExpenseModel.find(query)
                 .populate("recordedBy", "email")
                 .populate("currencyId", "name code symbol")
-                .populate("receiptMediaId", "publicUrl")
+                .populate("receiptMediaId", "storageKey publicUrl originalFileName mimeType")
                 .sort({ [sortBy]: sortOrder === "asc" ? 1 : -1 })
                 .skip(skip)
                 .limit(validatedLimit)
@@ -147,8 +152,15 @@ export class ExpenseService {
             ExpenseModel.countDocuments(query).exec(),
         ]);
 
+        const formattedItems = items.map((item: any) => {
+            if (item.receiptMediaId) {
+                item.receiptMediaId = formatMediaObject(item.receiptMediaId);
+            }
+            return item;
+        });
+
         return {
-            items,
+            items: formattedItems,
             meta: paginationMeta(page, validatedLimit, total),
         };
     }

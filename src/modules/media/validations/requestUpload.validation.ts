@@ -96,13 +96,6 @@ export const requestUploadValidation = (req: Request, res: Response, next: NextF
             }
         }
 
-        const hasResourceType = resourceType !== undefined && resourceType !== null;
-        const hasResourceId = resourceId !== undefined && resourceId !== null;
-
-        if (hasResourceType !== hasResourceId) {
-            return next(new AppError(MediaMessages.INVALID_RESOURCE, 400));
-        }
-
         return next();
     } catch (error) {
         return next(error);

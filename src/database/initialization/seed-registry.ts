@@ -6,6 +6,7 @@ import { executeSystemSettingsSeed } from "./seeds/system-settings.seed.js";
 import { executePermissionsSeed } from "./seeds/permissions.seed.js";
 import { executeRolesSeed } from "./seeds/roles.seed.js";
 import { executeAdminUserSeed } from "./seeds/admin-user.seed.js";
+import { executeBlogWebsitesSeed, INITIAL_BLOG_WEBSITES } from "./seeds/blog-websites.seed.js";
 
 import { LanguageModel } from "../../modules/languages/models/language.model.js";
 import { LanguageCode } from "../../modules/languages/constants/language.enums.js";
@@ -21,6 +22,7 @@ import { PERMISSION_DEFINITIONS } from "../../modules/permissions/constants/perm
 import { RoleModel } from "../../modules/roles/models/role.model.js";
 import { SYSTEM_ROLE_CODES } from "../../modules/roles/constants/role.constants.js";
 import { UserModel } from "../../modules/user/models/user.model.js";
+import { BlogWebsiteModel } from "../../modules/blogs/models/blogWebsite.model.js";
 
 export interface ISeedStep {
     id: string;
@@ -83,6 +85,12 @@ export const SEED_REGISTRY: readonly ISeedStep[] = [
         name: "Super Admin User",
         description: "Default super administrator user account",
         execute: executeAdminUserSeed,
+    },
+    {
+        id: "blog-websites",
+        name: "Blog Websites",
+        description: "Initial blog websites (Aaditya Softwares & StickyJi)",
+        execute: executeBlogWebsitesSeed,
     },
 ] as const;
 
@@ -179,6 +187,19 @@ export async function verifyDatabaseInitialization(): Promise<IVerificationResul
     details.adminUser = { count: adminUser ? 1 : 0, expected: 1, valid: !!adminUser };
     if (!details.adminUser.valid) {
         errors.push("Missing default super administrator user.");
+    }
+
+    // 9. Blog Websites
+    const websiteCount = await BlogWebsiteModel.countDocuments({
+        slug: { $in: INITIAL_BLOG_WEBSITES.map((w) => w.slug) },
+    });
+    details.blogWebsites = {
+        count: websiteCount,
+        expected: INITIAL_BLOG_WEBSITES.length,
+        valid: websiteCount >= INITIAL_BLOG_WEBSITES.length,
+    };
+    if (!details.blogWebsites.valid) {
+        errors.push(`Missing initial blog websites. Found ${websiteCount}/${INITIAL_BLOG_WEBSITES.length}`);
     }
 
     return {

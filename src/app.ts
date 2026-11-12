@@ -10,14 +10,23 @@ import { errorMiddleware } from "./middlewares/error/error.middleware.js";
 import { savePerformanceMiddleware } from "./utils/savePerformance.util.js";
 
 const app = express();
+
+/**
+ * CORS - Must precede all other middlewares and routes
+ */
+app.use(cors(createCorsOptions()));
+
 app.use(savePerformanceMiddleware);
 
 /**
  * Security
  */
-app.use(helmet());
+app.use(
+    helmet({
+        crossOriginResourcePolicy: { policy: "cross-origin" },
+    }),
+);
 app.use(cookieParser());
-app.use(cors(createCorsOptions()));
 
 /**
  * Performance

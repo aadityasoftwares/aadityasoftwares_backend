@@ -1,23 +1,24 @@
 // Sticky Ji — Email Assets
+import { MEDIA_BASE_URL } from "../../config/cloudflareR2.config.js";
 
 export const emailAssets = {
     logo: {
-        primary: "https://aadityasoftwares.fun/mystickynotes/mystickynoteslogo.png",
+        primary: `${MEDIA_BASE_URL}/logo/primary-logo.png`,
     },
 
     links: {
-        website: "https://aadityasoftwares.fun/mystickynotes",
-        dashboard: "https://aadityasoftwares.fun/mystickynotes",
-        login: "https://aadityasoftwares.fun/mystickynotes/login",
-        signup: "https://aadityasoftwares.fun/mystickynotes/signup",
-        pricing: "https://aadityasoftwares.fun/mystickynotes/pricing",
-        support: "https://aadityasoftwares.fun/mystickynotes/support",
+        website: "https://aadityasoftwares.in/mystickynotes",
+        dashboard: "https://aadityasoftwares.in/mystickynotes",
+        login: "https://aadityasoftwares.in/mystickynotes/login",
+        signup: "https://aadityasoftwares.in/mystickynotes/signup",
+        pricing: "https://aadityasoftwares.in/mystickynotes/pricing",
+        support: "https://aadityasoftwares.in/mystickynotes/support",
     },
 
     actions: {
-        verifyEmail: "https://aadityasoftwares.fun/mystickynotes/verify-email",
-        resetPassword: "https://aadityasoftwares.fun/mystickynotes/reset-password",
-        unsubscribe: "https://aadityasoftwares.fun/mystickynotes/unsubscribe",
+        verifyEmail: "https://aadityasoftwares.in/mystickynotes/verify-email",
+        resetPassword: "https://aadityasoftwares.in/mystickynotes/reset-password",
+        unsubscribe: "https://aadityasoftwares.in/mystickynotes/unsubscribe",
     },
 } as const;
 

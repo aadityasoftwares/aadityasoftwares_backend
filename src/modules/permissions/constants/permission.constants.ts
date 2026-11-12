@@ -39,6 +39,13 @@ export const PERMISSION_CODES = {
     // Reports
     REPORT_VIEW: "REPORT_VIEW",
 
+    // Blog Management
+    BLOG_VIEW: "BLOG_VIEW",
+    BLOG_CREATE: "BLOG_CREATE",
+    BLOG_UPDATE: "BLOG_UPDATE",
+    BLOG_DELETE: "BLOG_DELETE",
+    BLOG_PUBLISH: "BLOG_PUBLISH",
+
     // Administration
     USER_MANAGE: "USER_MANAGE",
     ROLE_MANAGE: "ROLE_MANAGE",
@@ -321,5 +328,56 @@ export const PERMISSION_DEFINITIONS: readonly PermissionDefinition[] = [
         access: PermissionAccess.GENERAL,
         description: "Allows managing global platform and company settings.",
         sortOrder: 820,
+    },
+    // Blog Management
+    {
+        name: "blog_view",
+        displayName: "View Blogs",
+        code: PERMISSION_CODES.BLOG_VIEW,
+        module: PermissionModule.BLOG,
+        action: PermissionAction.READ,
+        access: PermissionAccess.GENERAL,
+        description: "Allows viewing blog articles, websites, categories, tags, and authors.",
+        sortOrder: 900,
+    },
+    {
+        name: "blog_create",
+        displayName: "Create Blog",
+        code: PERMISSION_CODES.BLOG_CREATE,
+        module: PermissionModule.BLOG,
+        action: PermissionAction.CREATE,
+        access: PermissionAccess.GENERAL,
+        description: "Allows creating blog articles, websites, categories, tags, and authors.",
+        sortOrder: 910,
+    },
+    {
+        name: "blog_update",
+        displayName: "Update Blog",
+        code: PERMISSION_CODES.BLOG_UPDATE,
+        module: PermissionModule.BLOG,
+        action: PermissionAction.UPDATE,
+        access: PermissionAccess.GENERAL,
+        description: "Allows updating blog articles, websites, categories, tags, and authors.",
+        sortOrder: 920,
+    },
+    {
+        name: "blog_delete",
+        displayName: "Delete Blog",
+        code: PERMISSION_CODES.BLOG_DELETE,
+        module: PermissionModule.BLOG,
+        action: PermissionAction.DELETE,
+        access: PermissionAccess.GENERAL,
+        description: "Allows deleting blog articles, categories, tags, and redirects.",
+        sortOrder: 930,
+    },
+    {
+        name: "blog_publish",
+        displayName: "Publish Blog",
+        code: PERMISSION_CODES.BLOG_PUBLISH,
+        module: PermissionModule.BLOG,
+        action: PermissionAction.PUBLISH,
+        access: PermissionAccess.GENERAL,
+        description: "Allows publishing, scheduling, and archiving blog articles.",
+        sortOrder: 940,
     },
 ] as const;

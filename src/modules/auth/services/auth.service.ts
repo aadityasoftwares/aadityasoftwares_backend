@@ -10,6 +10,8 @@ import { UserProfileModel } from "../../userprofile/models/userProfile.model.js"
 import { CloudflareR2Service } from "../../media/storage/cloudflareR2.service.js";
 import { MediaModel } from "../../media/models/media.model.js";
 import { MediaVisibility } from "../../media/constants/media.enums.js";
+import { RoleModel } from "../../roles/models/role.model.js";
+import { resolveMediaUrl } from "../../../utils/mediaUrl.util.js";
 import type { IAuthUserProfileResponse } from "../interfaces/auth.interface.js";
 
 import { SessionService } from "./session.service.js";
@@ -991,6 +993,55 @@ export class AuthService {
         }
     }
 
+    async getCurrentUser(userId: string) {
+        const user = await this.userRepository.findById(userId);
+        if (!user) throw new AppError(AuthMessages.ACCOUNT_NOT_FOUND, 404);
+
+        let role: any = null;
+        let permissions: string[] = [];
+
+        if (user.globalRoleId) {
+            const roleDoc = await RoleModel.findById(user.globalRoleId)
+                .populate("permissions", "code name module action")
+                .lean()
+                .exec();
+
+            if (roleDoc) {
+                role = {
+                    _id: roleDoc._id,
+                    name: roleDoc.name,
+                    code: roleDoc.code,
+                    description: roleDoc.description,
+                    isSystemRole: (roleDoc as any).isSystem ?? (roleDoc as any).isSystemRole,
+                };
+                permissions = ((roleDoc.permissions as any[]) || []).map((p: any) => p?.code || String(p));
+            }
+        }
+
+        const userProfile = await UserProfileModel.findOne({ userId: user._id })
+            .select("firstName lastName displayName profileImage avatarUrl")
+            .lean()
+            .exec();
+        const profile = userProfile ? await this.resolveAuthProfile(userProfile) : null;
+
+        return {
+            id: user._id.toString(),
+            _id: user._id,
+            email: user.email,
+            globalRoleId: user.globalRoleId,
+            status: user.status,
+            authProvider: user.authProvider,
+            isEmailVerified: user.isEmailVerified,
+            isPhoneVerified: user.isPhoneVerified,
+            isMfaEnabled: user.isMfaEnabled,
+            role,
+            permissions,
+            profile,
+            createdAt: user.createdAt,
+            updatedAt: user.updatedAt,
+        };
+    }
+
     private resolveId(value: unknown): string {
         if (value instanceof Types.ObjectId) {
             return value.toString();
@@ -1047,15 +1098,16 @@ export class AuthService {
 
             if (media) {
                 const storageService = new CloudflareR2Service();
-                const url =
-                    media.visibility === MediaVisibility.PUBLIC && storageService.isPublicBucket(media.bucket) && media.publicUrl
-                        ? media.publicUrl
+                const rawUrl =
+                    media.visibility === MediaVisibility.PUBLIC && storageService.isPublicBucket(media.bucket)
+                        ? resolveMediaUrl(media.storageKey || media.publicUrl) || storageService.getPublicUrl(media.storageKey)
                         : await storageService.createDownloadUrl(media.storageKey, undefined, undefined, media.bucket);
+                const url = resolveMediaUrl(rawUrl) || rawUrl;
                 profileImage = { id: media._id.toString(), url };
             }
         }
 
-        const avatarUrl = profileImage?.url ?? profile.avatarUrl ?? null;
+        const avatarUrl = profileImage?.url ?? resolveMediaUrl(profile.avatarUrl) ?? null;
 
         return {
             firstName: profile.firstName ?? null,

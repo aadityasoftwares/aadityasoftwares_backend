@@ -28,6 +28,8 @@ import taskRoutes from "../modules/tasks/task.routes.js";
 import expenseRoutes from "../modules/expenses/expense.routes.js";
 import dashboardRoutes from "../modules/dashboard/dashboard.routes.js";
 import reportRoutes from "../modules/reports/report.routes.js";
+import blogAdminRoutes from "../modules/blogs/routes/blogAdmin.routes.js";
+import blogPublicRoutes from "../modules/blogs/routes/blogPublic.routes.js";
 
 const router = Router();
 
@@ -58,6 +60,10 @@ router.use("/tasks", savePerformanceModule("tasks"), taskRoutes);
 router.use("/expenses", savePerformanceModule("expenses"), expenseRoutes);
 router.use("/dashboard", savePerformanceModule("dashboard"), dashboardRoutes);
 router.use("/reports", savePerformanceModule("reports"), reportRoutes);
+
+// Blog Management Module
+router.use("/public/blog", savePerformanceModule("public-blog"), blogPublicRoutes);
+router.use("/blogs", savePerformanceModule("blogs"), blogAdminRoutes);
 
 export default router;
 

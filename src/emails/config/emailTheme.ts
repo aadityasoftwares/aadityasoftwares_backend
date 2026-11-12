@@ -1,13 +1,14 @@
 // ============================================================
 // Sticky Ji — Email Design Theme
 // ============================================================
+import { MEDIA_BASE_URL } from "../../config/cloudflareR2.config.js";
 
 export const emailTheme = {
     // Brand
     brand: {
         name: "Aaditya Softwares",
-        logo: "https://aadityasoftwares.fun/mystickynotes/mystickynoteslogo.png",
-        website: "https://aadityasoftwares.fun",
+        logo: `${MEDIA_BASE_URL}/logo/primary-logo.png`,
+        website: "https://aadityasoftwares.in",
     },
 
     // Design System Colors

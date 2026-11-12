@@ -66,7 +66,10 @@ export class PermissionAuthorizationService {
         const targetActions = Array.isArray(action) ? action : [action];
 
         const matching = auth.permissions.filter(
-            (p) => p.isActive && p.module === targetModule && targetActions.includes(p.action),
+            (p) =>
+                p.isActive &&
+                p.module === targetModule &&
+                (targetActions.includes(p.action) || p.action === PermissionAction.MANAGE),
         );
 
         if (matching.length === 0) {

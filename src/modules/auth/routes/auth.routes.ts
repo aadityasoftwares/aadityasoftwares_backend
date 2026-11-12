@@ -80,5 +80,6 @@ authRoutes.get("/logout", logoutAuthMiddleware, authController.logout);
 authRoutes.post("/logoutall", authMiddleware, authController.logoutAll);
 
 authRoutes.get("/sessions", authMiddleware, authController.getSessions);
+authRoutes.get("/me", authMiddleware, authController.getMe);
 
 export default authRoutes;

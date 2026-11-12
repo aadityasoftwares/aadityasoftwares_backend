@@ -5,6 +5,7 @@ import app from "./app.js";
 import { connectDatabase } from "./config/database.js";
 import { initializeDatabaseIfRequired } from "./database/initialization/database-initializer.js";
 import { startMediaCleanupScheduler } from "./modules/media/schedulers/mediaCleanup.scheduler.js";
+import { startBlogPublishScheduler } from "./modules/blogs/schedulers/blogPublish.scheduler.js";
 
 const PORT = process.env.PORT || 5050;
 
@@ -20,6 +21,7 @@ async function startServer() {
         await initializeDatabaseIfRequired();
 
         startMediaCleanupScheduler();
+        startBlogPublishScheduler();
 
         app.listen(PORT, () => {
             console.log(`🚀 Aaditya Softwares Server running at http://localhost:${PORT}`);

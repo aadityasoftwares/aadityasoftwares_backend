@@ -28,11 +28,11 @@ export const SYSTEM_SETTING_DEFAULTS = [
     },
     {
         key: SystemSettingKey.COMPANY_EMAIL,
-        value: "contact@aadityasoftwares.fun",
+        value: "contact@aadityasoftwares.in",
         valueType: SystemSettingValueType.STRING,
         category: SystemSettingCategory.COMPANY,
         description: "Official company email address.",
-        defaultValue: "contact@aadityasoftwares.fun",
+        defaultValue: "contact@aadityasoftwares.in",
         isEditable: true,
         isPublic: true,
     },

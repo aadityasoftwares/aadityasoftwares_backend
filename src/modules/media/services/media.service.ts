@@ -19,6 +19,7 @@ import type {
 } from "../interfaces/media.interface.js";
 import { CloudflareR2Service } from "../storage/cloudflareR2.service.js";
 import { StorageKeyBuilder, type MediaStorageScope } from "../storage/storageKey.builder.js";
+import { resolveMediaUrl, formatMediaObject } from "../../../utils/mediaUrl.util.js";
 import { PermissionAction } from "../../permissions/constants/permission.enums.js";
 import { MediaUtil } from "../utils/media.util.js";
 import { MediaValidation } from "../validations/media.validation.js";
@@ -33,11 +34,9 @@ export class MediaService {
     private readonly content = new MediaContentService();
 
     async requestUpload(data: IMediaUploadRequest, userId: string) {
-        if (Boolean(data.resourceType) !== Boolean(data.resourceId))
-            throw new AppError(
-                data.resourceId ? MediaMessages.INVALID_RESOURCE_TYPE : MediaMessages.INVALID_RESOURCE,
-                400,
-            );
+        if (data.resourceId && !data.resourceType) {
+            throw new AppError(MediaMessages.INVALID_RESOURCE_TYPE, 400);
+        }
         const scope = await this.access.resolve(
             userId,
             data.resourceType,
@@ -224,15 +223,15 @@ export class MediaService {
             publicUrl:
                 media.visibility === MediaVisibility.PUBLIC &&
                 this.storageService.isPublicBucket(media.bucket)
-                    ? this.storageService.getPublicUrl(media.storageKey)
+                    ? resolveMediaUrl(media.storageKey)
                     : null,
         });
         if (updated) {
             await this.refreshUsage(updated);
-            return updated;
+            return formatMediaObject(updated);
         }
         const current = await this.findAuthorized(mediaId, userId, PermissionAction.UPDATE);
-        if (current.status === MediaStatus.ACTIVE) return current;
+        if (current.status === MediaStatus.ACTIVE) return formatMediaObject(current);
         throw new AppError(MediaMessages.UPLOAD_NOT_COMPLETED, 409);
     }
 
@@ -246,7 +245,7 @@ export class MediaService {
 
     async getMedia(mediaId: string, userId: string) {
         const media = await this.findAuthorized(mediaId, userId);
-        const result = media.toObject();
+        const result = formatMediaObject(media.toObject());
         return {
             ...result,
             publicUrl:
@@ -255,7 +254,7 @@ export class MediaService {
                 !media.workspaceId &&
                 media.resourceType !== MediaResourceType.NOTE &&
                 media.resourceType !== MediaResourceType.WORKSPACE
-                    ? result.publicUrl
+                    ? resolveMediaUrl(media.storageKey || result.publicUrl)
                     : null,
             downloadUrl:
                 media.status === MediaStatus.ACTIVE
@@ -276,7 +275,7 @@ export class MediaService {
             media.resourceType !== MediaResourceType.WORKSPACE
         ) {
             return {
-                downloadUrl: this.storageService.getPublicUrl(media.storageKey),
+                downloadUrl: resolveMediaUrl(media.storageKey) || this.storageService.getPublicUrl(media.storageKey),
                 visibility: MediaVisibility.PUBLIC,
             };
         }
@@ -294,7 +293,7 @@ export class MediaService {
 
     async getMediaFiles(userId: string, filters: IMediaFilter = {}) {
         const scope = await this.access.resolve(userId, filters.resourceType, filters.resourceId);
-        return this.mediaRepository.findAll({
+        const result = await this.mediaRepository.findAll({
             ...filters,
             tenantId: scope.tenantId,
             workspaceId: scope.workspaceId,
@@ -306,6 +305,11 @@ export class MediaService {
                 ? filters.sortBy
                 : "createdAt",
         });
+
+        return {
+            ...result,
+            data: result.data.map((item: any) => formatMediaObject(item)),
+        };
     }
 
     async updateMedia(mediaId: string, userId: string, data: IMediaUpdateRequest) {

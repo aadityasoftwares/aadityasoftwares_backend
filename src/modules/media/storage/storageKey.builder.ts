@@ -54,7 +54,7 @@ export class StorageKeyBuilder {
             if (!scope.tenantId) throw new AppError("Missing storage tenant.", 400);
             prefix = `tenants/${segment(scope.tenantId)}/workspaces/${segment(scope.workspaceId)}`;
             prefix += scope.noteId ? `/notes/${segment(scope.noteId)}/${folder}` : `/assets/${folder}`;
-        } else if (scope.tenantId || scope.noteId) {
+        } else if (scope.noteId) {
             throw new AppError("Invalid storage scope.", 400);
         }
         return `${prefix}/${now.getUTCFullYear()}/${String(now.getUTCMonth() + 1).padStart(2, "0")}/${randomUUID()}.${extension}`;

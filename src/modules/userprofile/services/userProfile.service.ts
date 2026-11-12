@@ -27,6 +27,7 @@ import {
     MediaType,
     MediaVisibility,
 } from "../../media/constants/media.enums.js";
+import { resolveMediaUrl, MEDIA_PLACEHOLDERS } from "../../../utils/mediaUrl.util.js";
 
 /*
  * Public response returned to frontend.
@@ -684,10 +685,8 @@ export class UserProfileService {
 
         let url: string;
         try {
-            if (mediaDoc.visibility === MediaVisibility.PUBLIC && this.storageService.isPublicBucket(mediaDoc.bucket) && mediaDoc.publicUrl) {
-                url = mediaDoc.publicUrl;
-            } else if (mediaDoc.visibility === MediaVisibility.PUBLIC && this.storageService.isPublicBucket(mediaDoc.bucket)) {
-                url = this.storageService.getPublicUrl(mediaDoc.storageKey);
+            if (mediaDoc.visibility === MediaVisibility.PUBLIC && this.storageService.isPublicBucket(mediaDoc.bucket)) {
+                url = resolveMediaUrl(mediaDoc.storageKey || mediaDoc.publicUrl) || this.storageService.getPublicUrl(mediaDoc.storageKey);
             } else {
                 url = await this.storageService.createDownloadUrl(mediaDoc.storageKey, undefined, undefined, mediaDoc.bucket);
             }
@@ -697,7 +696,7 @@ export class UserProfileService {
 
         return {
             id: idStr,
-            url,
+            url: resolveMediaUrl(url) || url,
         };
     }
 
@@ -726,7 +725,7 @@ export class UserProfileService {
             languageId: this.getOptionalId(data.languageId),
             currencyId: this.getOptionalId(data.currencyId),
             profileImage: profileImageSummary,
-            avatarUrl: profileImageSummary?.url ?? null,
+            avatarUrl: profileImageSummary?.url ?? resolveMediaUrl(data.avatarUrl) ?? null,
         };
     }
 

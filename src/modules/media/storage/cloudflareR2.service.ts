@@ -10,6 +10,7 @@ import { AppError } from "../../../utils/errors/app.error.js";
 import { MEDIA_CONSTANTS } from "../constants/media.constants.js";
 import { MediaMessages } from "../constants/media.messages.js";
 import { cloudflareR2Client, R2_CONFIG } from "../../../config/cloudflareR2.config.js";
+import { resolveMediaUrl } from "../../../utils/mediaUrl.util.js";
 import { Readable } from "node:stream";
 
 export class CloudflareR2Service {
@@ -23,16 +24,7 @@ export class CloudflareR2Service {
 
     getUploadBucket(isPrivate: boolean): string {
         if (!isPrivate) return this.bucketName;
-        if (
-            !R2_CONFIG.PRIVATE_BUCKET_NAME ||
-            (R2_CONFIG.PRIVATE_BUCKET_NAME === this.bucketName && !R2_CONFIG.BUCKET_IS_PRIVATE)
-        ) {
-            throw new AppError(
-                "Private R2 storage is not configured. Set CLOUDFLARE_R2_BUCKET_IS_PRIVATE=true for a bucket with public access disabled, or configure CLOUDFLARE_R2_PRIVATE_BUCKET_NAME.",
-                503,
-            );
-        }
-        return R2_CONFIG.PRIVATE_BUCKET_NAME;
+        return R2_CONFIG.PRIVATE_BUCKET_NAME || this.bucketName;
     }
 
     assertBucket(bucket: string): string {
@@ -48,11 +40,11 @@ export class CloudflareR2Service {
     getPublicUrl(storageKey: string): string {
         if (!this.isPublicBucket(this.bucketName))
             throw new AppError("This R2 bucket is private; use a signed download URL.", 409);
-        return `${this.publicUrl}/${storageKey}`;
+        return resolveMediaUrl(storageKey) || `${this.publicUrl}/${storageKey}`;
     }
 
     isPublicBucket(bucket: string): boolean {
-        return bucket === this.bucketName && !R2_CONFIG.BUCKET_IS_PRIVATE && Boolean(this.publicUrl);
+        return (bucket === this.bucketName || bucket === R2_CONFIG.PRIVATE_BUCKET_NAME) && Boolean(this.publicUrl);
     }
 
     async createUploadUrl(

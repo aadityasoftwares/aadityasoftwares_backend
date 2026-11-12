@@ -91,5 +91,17 @@ export const AuditLogConfig: Partial<Record<AppModule, IAuditLogModuleConfig>> =
         resourceType: "Task",
         actions: [AuditLogAction.CREATE, AuditLogAction.UPDATE, AuditLogAction.DELETE, AuditLogAction.ASSIGN, AuditLogAction.STATUS_CHANGE, AuditLogAction.COMPLETE],
     },
+
+    [AppModule.BLOG]: {
+        resourceType: "Blog",
+        actions: [
+            AuditLogAction.CREATE,
+            AuditLogAction.UPDATE,
+            AuditLogAction.DELETE,
+            AuditLogAction.STATUS_CHANGE,
+            AuditLogAction.SETTINGS_UPDATED,
+            AuditLogAction.RESTORE,
+        ],
+    },
 };
 
