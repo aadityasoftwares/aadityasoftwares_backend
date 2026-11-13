@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { MediaPurpose } from "../constants/media.enums.js";
+import { MediaPurpose, MediaResourceType } from "../constants/media.enums.js";
 import { MEDIA_CONSTANTS } from "../constants/media.constants.js";
 import { AppError } from "../../../utils/errors/app.error.js";
 
@@ -38,6 +38,8 @@ export class StorageKeyBuilder {
         purpose: MediaPurpose,
         extension: string,
         now = new Date(),
+        resourceType?: MediaResourceType | null,
+        resourceId?: string | null,
     ): string {
         const segment = (value: string): string => {
             if (!/^[a-f\d]{24}$/i.test(value)) throw new AppError("Invalid storage ownership.", 400);
@@ -50,7 +52,10 @@ export class StorageKeyBuilder {
         const folder = purposeFolders[purpose];
         if (!folder) throw new AppError("Unsupported storage purpose.", 400);
         let prefix = `accounts/${segment(scope.accountId)}/users/${segment(scope.accountId)}/${folder}`;
-        if (scope.workspaceId) {
+        if (resourceType === MediaResourceType.BLOG) {
+            const blogSegment = resourceId ? segment(resourceId) : "drafts";
+            prefix = `accounts/${segment(scope.accountId)}/blogs/${blogSegment}/${folder}`;
+        } else if (scope.workspaceId) {
             if (!scope.tenantId) throw new AppError("Missing storage tenant.", 400);
             prefix = `tenants/${segment(scope.tenantId)}/workspaces/${segment(scope.workspaceId)}`;
             prefix += scope.noteId ? `/notes/${segment(scope.noteId)}/${folder}` : `/assets/${folder}`;
